@@ -1,0 +1,41 @@
+spring:
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:inssagram
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+#  datasource:
+#    url: jdbc:mysql://ldudb.cs3wzmj0phr7.ap-northeast-2.rds.amazonaws.com:3306/
+#    username: admin
+#    password: 1234
+
+  jpa:
+    hibernate:
+      format_sql: true
+      show_sql: true
+      ddl-auto: update
+
+#  redis:
+#    host: localhost # 디폴트
+#    port: 6379 # 디폴트
+
+
+server:
+  error:
+    include-exception: false # Response에 Exception 표시 여부
+    include-message: always # Response에 Exception Message 표시 여부
+    include-stacktrace: on_param # Response에 Stack Trace 표시 여부
+  servlet:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+
+# echo 'spring-boot-security-jwt-hanghae-assignment-spring-boot-security-jwt-secret-key' | base64
+jwt:
+  secret: 4oCYc3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWhhbmdoYWUtYXNzaWdubWVudC1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3Qtc2VjcmV0LWtleeKAmQo=
