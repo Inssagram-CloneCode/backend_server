@@ -3,6 +3,8 @@ package com.clonecode.inssagram.controller;
 import com.clonecode.inssagram.dto.request.LoginRequestDto;
 import com.clonecode.inssagram.dto.request.SignUpRequestDto;
 import com.clonecode.inssagram.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+@Api(value = "유저 컨트롤러")
 @RequiredArgsConstructor
 @RestController
 public class UserController {
@@ -22,11 +25,13 @@ public class UserController {
     private final UserService userService;
 
     @RequestMapping(value = "/api/signup", method = RequestMethod.POST)
+    @ApiOperation(value = "회원가입", notes = "회원가입 기능")
     public ResponseEntity signup(@RequestBody @Valid SignUpRequestDto requestDto) {
         return new ResponseEntity<>(userService.createUser(requestDto), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
+    @ApiOperation(value = "로그인", notes = "로그인 기능")
     public ResponseEntity login(@RequestBody @Valid LoginRequestDto requestDto,
                                 HttpServletResponse response
     ) {
@@ -34,8 +39,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/api/auth/logout", method = RequestMethod.POST)
+    @ApiOperation(value = "로그아웃", notes = "로그아웃 기능")
     public ResponseEntity logout(HttpServletRequest request) {
-
         return new ResponseEntity<>("로그아웃", HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 }
