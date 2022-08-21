@@ -50,4 +50,17 @@ deploy:
     wait-until-deployed: true
     on:
       all_branches: true
+      
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # Travis repo settings에서 설정된 값
+    secret_access_key: $AWS_SECRET_KEY # Travis repo settings에서 설정된 값
+    bucket: ldu-springboot-build # S3 버킷 이름
+    key: backend_server.zip # 빌드 파일을 압축해서 전달
+    bundle_type: zip # 압축 확장자
+    application: backend_server # 웹 콘솔에서 등록한 CodeDeploy 애플리케이션
+    deployment_group: backend_server-group # 웹 콘솔에서 등록한 CodeDeploy 배포 그룹 이름
+    region: ap-northeast-2 # 지역이름
+    wait-until-deployed: true
+    on:
+      all_branches: true
   
