@@ -29,3 +29,23 @@ notifications:
   email:
     recipients:
       - v_donguk@naver.com
+
+# deploy 명령어가 실행되기 전 전처리 과정
+# CodeDeploy는 Jar 파일을 인식 못하므로 Jar+기타 설정 파일들을 모아 압축함.
+before_deploy:
+  - zip -r backend_server * # 현재 위치의 모든 파일을 backend_server(프로젝트 이름) 이름으로 압축함
+  - mkdir -p deploy/inssagram #Travis CI가 실행중인 위치에 디렉토리 생성
+  - mv backend_server.zip deploy/inssagram/backend_server.zip # backend_server.zip 파일을 해당 디렉토리로 이동
+  
+# S3 파일 업로드 혹은 CodeDeploy로 배포 등 외부 서비스와 연동될 행위들을 선언.
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # Travis repo settings에서 설정된 값
+    secret_access_key: $AWS_SECRET_KEY # Travis repo settings에서 설정된 값
+    bucket: ldu-springboot-build # S3 버킷 이름
+    region: ap-northeast-2 # 지역이름
+    skip_cleanup: true
+    acl: private # zip 파일 접근을 private으로 설정
+    local_dir: deploy/inssagram # before_deploy에서 생성한 디렉토리에 있는 파일들만 S3로 정송
+    wait-until-deployed: true
+  
