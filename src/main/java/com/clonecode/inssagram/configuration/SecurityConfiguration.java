@@ -67,6 +67,12 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .requestMatchers(request -> CorsUtils.isPreFlightRequest(request)).permitAll()
                 .antMatchers("/h2-console/**").permitAll()  //h2-console 해제
+                .antMatchers("/swagger-ui.html",
+                        "/v2/api-docs",
+                        "/configuration/security",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/webjars/**").permitAll()   //swagger 해제
                 .antMatchers("/api/signup").permitAll()   //signup 해제
                 .antMatchers("/api/login").permitAll()   //login 해제
                 .anyRequest().authenticated()
