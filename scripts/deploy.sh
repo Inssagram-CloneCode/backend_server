@@ -35,8 +35,6 @@ chmod +x $JAR_NAME # JAR 파일에 대한 권한이 없으므로 부여함.
 
 echo "> $JAR_NAME 실행"
 
-nohup java -jar \
-    -Dspring.config.location=classpath:/application.yml,/home/ubuntu/app/application-server.yml \
-    $JAR_NAME > $REPOSITORY/nohup.out 2>&1 & # nobup 실행하면 CodeDeploy가 무한 대기하므로 nobup.out을 표준 입출력용으로 별도로 사용함.
+nohup java -jar -Dspring.config.location=classpath:/application.yml,/home/ubuntu/app/application-server.yml $JAR_NAME > $REPOSITORY/nohup.out 2>&1 & # nobup 실행하면 CodeDeploy가 무한 대기하므로 nobup.out을 표준 입출력용으로 별도로 사용함.
     # 이렇게 하지 않으면 nohup.out 파일이 생성되지 않고, CodeDeploy 로그에 표준 입출력이 출력됨.
     # nohup이 끝나기 전까지 CodeDeploy도 끝나지 않으니 꼭 이렇게 해야만 함.
