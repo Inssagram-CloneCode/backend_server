@@ -1,16 +1,13 @@
 package com.clonecode.inssagram.controller;
 
 import com.clonecode.inssagram.domain.User;
-import com.clonecode.inssagram.domain.UserDetailsImpl;
 import com.clonecode.inssagram.dto.request.PostRequestDto;
-import com.clonecode.inssagram.dto.response.AllPostResponseDto;
 import com.clonecode.inssagram.dto.response.PostResponseDto;
 import com.clonecode.inssagram.dto.response.ResponseDto;
 import com.clonecode.inssagram.jwt.TokenProvider;
 import com.clonecode.inssagram.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
