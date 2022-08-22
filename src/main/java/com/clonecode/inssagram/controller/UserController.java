@@ -22,19 +22,19 @@ public class UserController {
     private final UserService userService;
 
     @RequestMapping(value = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signup(@RequestBody @Valid SignUpRequestDto requestDto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid SignUpRequestDto requestDto) {
         return new ResponseEntity<>(userService.createUser(requestDto), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody @Valid LoginRequestDto requestDto,
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto requestDto,
                                 HttpServletResponse response
     ) {
-        return new ResponseEntity(userService.login(requestDto, response), HttpStatus.valueOf(HttpStatus.OK.value()));
+        return new ResponseEntity<>(userService.login(requestDto, response), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @RequestMapping(value = "/api/auth/logout", method = RequestMethod.POST)
-    public ResponseEntity logout(HttpServletRequest request) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
 
         return new ResponseEntity<>("로그아웃", HttpStatus.valueOf(HttpStatus.OK.value()));
     }
