@@ -1,6 +1,7 @@
 package com.clonecode.inssagram.global.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -41,7 +42,9 @@ public enum ErrorCode {
 //    INVALID_IMAGE_FILE_EXTENSION(400, "INVALID_IMAGE_FILE_EXTENSION", "bmp,jpg,jpeg,png 형식의 이미지 파일이 요구됨.");
 
     private final int status;
+    @ApiModelProperty(example = "데이터 교환 실패시 code")
     private final String code;
+    @ApiModelProperty(example = "데이터 교환 실패시 message")
     private final String message;
 
 }

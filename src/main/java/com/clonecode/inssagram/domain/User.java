@@ -18,7 +18,7 @@ import java.util.Objects;
 @Entity(name = "users")
 public class User extends Timestamped {
     // ID가 자동으로 생성 및 증가합니다.
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long userId;
 
