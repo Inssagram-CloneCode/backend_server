@@ -36,6 +36,7 @@ before_deploy:
   - mkdir -p before-deploy # zip에 파합시킬 파일들을 담을 디렉토리 생성
   - cp scripts/*.sh before-deploy/ # 스크립트 파일 복사
   - cp appspec.yml before-deploy/ # CodeDeploy 설정 파일 복사
+  - cp build/libs/*.jar before-deploy/ # jar 배포파일 복사
   - cd before-deploy && zip -r before-deploy * # before-deploy로 이동하여 전체 파일 압축함
   - cd ../ && mkdir -p deploy # 상위 디렉토리 이동하여 deploy 디렉토리 생성
   - mv before-deploy/before-deploy.zip deploy/backend_server.zip # deploy로 zip파일 이동
