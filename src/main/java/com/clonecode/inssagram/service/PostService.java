@@ -17,7 +17,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto writePost(User user, PostRequestDto requestDto) {
-        Post post = new Post (user, requestDto);
+        Post post = new Post(user, requestDto);
 
         postRepository.save(post);
         return PostResponseDto.builder()

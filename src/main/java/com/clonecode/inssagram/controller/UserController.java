@@ -35,7 +35,7 @@ public class UserController {
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     @ApiOperation(value = "로그인", notes = "로그인 기능", response = LoginResponseDto.class)
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto requestDto,
-                                HttpServletResponse response
+                                   HttpServletResponse response
     ) {
         return new ResponseEntity<>(userService.login(requestDto, response), HttpStatus.valueOf(HttpStatus.OK.value()));
     }

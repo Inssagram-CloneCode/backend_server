@@ -14,33 +14,33 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ResponseDto> handleValidationExceptions(MethodArgumentNotValidException exception) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseDto> handleValidationExceptions(MethodArgumentNotValidException exception) {
 
-    return new ResponseEntity<>(ResponseDto.fail(ErrorCode.NOT_PASS_VALIDATION), HttpStatus.valueOf(ErrorCode.NOT_PASS_VALIDATION.getStatus()));
-  }
+        return new ResponseEntity<>(ResponseDto.fail(ErrorCode.NOT_PASS_VALIDATION), HttpStatus.valueOf(ErrorCode.NOT_PASS_VALIDATION.getStatus()));
+    }
 
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<ResponseDto> handleBusinessExceptions(BusinessException exception) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ResponseDto> handleBusinessExceptions(BusinessException exception) {
 
-    return new ResponseEntity<>(ResponseDto.fail(ErrorCode.SERVER_ERROR), HttpStatus.valueOf(ErrorCode.SERVER_ERROR.getStatus()));
-  }
+        return new ResponseEntity<>(ResponseDto.fail(ErrorCode.SERVER_ERROR), HttpStatus.valueOf(ErrorCode.SERVER_ERROR.getStatus()));
+    }
 
-  @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<ResponseDto> handleEntityNotFoundException(EntityNotFoundException exception) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ResponseDto> handleEntityNotFoundException(EntityNotFoundException exception) {
 
-    final ErrorCode errorCode = exception.getErrorCode();
-    final ResponseDto responseDto = ResponseDto.fail(errorCode);
-    return new ResponseEntity<>(responseDto, HttpStatus.valueOf(errorCode.getStatus()));
-  }
+        final ErrorCode errorCode = exception.getErrorCode();
+        final ResponseDto responseDto = ResponseDto.fail(errorCode);
+        return new ResponseEntity<>(responseDto, HttpStatus.valueOf(errorCode.getStatus()));
+    }
 
-  @ExceptionHandler(InvalidValueException.class)
-  public ResponseEntity<ResponseDto> handleInvalidValueException(InvalidValueException exception) {
+    @ExceptionHandler(InvalidValueException.class)
+    public ResponseEntity<ResponseDto> handleInvalidValueException(InvalidValueException exception) {
 
-    final ErrorCode errorCode = exception.getErrorCode();
-    final ResponseDto responseDto = ResponseDto.fail(errorCode);
-    return new ResponseEntity<>(responseDto, HttpStatus.valueOf(errorCode.getStatus()));
-  }
+        final ErrorCode errorCode = exception.getErrorCode();
+        final ResponseDto responseDto = ResponseDto.fail(errorCode);
+        return new ResponseEntity<>(responseDto, HttpStatus.valueOf(errorCode.getStatus()));
+    }
 
 
 }

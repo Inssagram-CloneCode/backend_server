@@ -26,6 +26,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     private final TokenProvider tokenProvider;
+
     // 댓글 작성
     @Transactional
     public ResponseDto<?> createComment(User user, Long postId, CommentRequestDto requestDto) {
@@ -53,9 +54,6 @@ public class CommentService {
 
         return ResponseDto.success("댓글 삭제가 완료되었습니다.");
     }
-
-
-
 
 
     // 댓글 조회(Post 조회 시 댓글 전체 리스트 Response)

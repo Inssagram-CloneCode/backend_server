@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Getter
-public class Post extends Timestamped{
+public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,12 +18,12 @@ public class Post extends Timestamped{
     private String postContents;
 
     private String imgUrl = "none";
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-public Post (User user, PostRequestDto postRequestDto){
-    this.user = user;
-    this.postContents = postRequestDto.getPostContents();
-}
+    public Post(User user, PostRequestDto postRequestDto) {
+        this.user = user;
+        this.postContents = postRequestDto.getPostContents();
+    }
 }
