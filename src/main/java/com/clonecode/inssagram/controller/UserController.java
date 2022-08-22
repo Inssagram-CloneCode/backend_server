@@ -28,21 +28,21 @@ public class UserController {
 
     @RequestMapping(value = "/api/signup", method = RequestMethod.POST)
     @ApiOperation(value = "회원가입", notes = "회원가입 기능", response = ResponseDto.class)
-    public ResponseEntity signup(@RequestBody @Valid SignUpRequestDto requestDto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid SignUpRequestDto requestDto) {
         return new ResponseEntity<>(userService.createUser(requestDto), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     @ApiOperation(value = "로그인", notes = "로그인 기능", response = LoginResponseDto.class)
-    public ResponseEntity login(@RequestBody @Valid LoginRequestDto requestDto,
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto requestDto,
                                 HttpServletResponse response
     ) {
-        return new ResponseEntity(userService.login(requestDto, response), HttpStatus.valueOf(HttpStatus.OK.value()));
+        return new ResponseEntity<>(userService.login(requestDto, response), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @RequestMapping(value = "/api/auth/logout", method = RequestMethod.POST)
     @ApiOperation(value = "로그아웃", notes = "로그아웃 기능", response = ResponseDto.class)
-    public ResponseEntity logout(HttpServletRequest request) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         return new ResponseEntity<>("로그아웃", HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 }
