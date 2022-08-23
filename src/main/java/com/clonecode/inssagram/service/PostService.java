@@ -1,14 +1,15 @@
 package com.clonecode.inssagram.service;
 
-import com.clonecode.inssagram.domain.Image;
-import com.clonecode.inssagram.domain.Post;
-import com.clonecode.inssagram.domain.User;
+import com.clonecode.inssagram.domain.*;
+import com.clonecode.inssagram.dto.request.HeartRequestDto;
 import com.clonecode.inssagram.dto.request.PostRequestDto;
 import com.clonecode.inssagram.dto.response.*;
 import com.clonecode.inssagram.exception.EntityNotFoundException;
 import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
+import com.clonecode.inssagram.jwt.TokenProvider;
 import com.clonecode.inssagram.repository.CommentRepository;
+import com.clonecode.inssagram.repository.HeartRepository;
 import com.clonecode.inssagram.repository.ImageRepository;
 import com.clonecode.inssagram.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,9 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final ImageRepository imageRepository;
     private final StorageService storageService;
+    private final HeartService heartService;
+    private final TokenProvider tokenProvider;
+    private final HeartRepository heartRepository;
 
     @Transactional
     public ResponseDto<?> writePost(User user, PostRequestDto requestDto, List<MultipartFile> imageFileList) {
@@ -49,12 +53,13 @@ public class PostService {
     public ResponseDto<?> getAllPosts() {
         List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();      //생성시간 늦은 순으로 정렬해서 찾기
         List<PostAllResponseDto> postAllResponseDtoList = new ArrayList<>();    //PostAllResponseDto 빈 array 생성
+        User user = tokenProvider.getUserFromAuthentication();
         for (Post post : posts) {       //각 포스트마다 돌면서
             Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
             postAllResponseDtoList.add(PostAllResponseDto.builder()//빈 array에 responseDto 만들어서 넣어주기
-                    .isHeart(0L)
+                    .isHeart(heartService.isHeart(post.getId(),user))
                     .post(post)
-                    .heartNum(0L)
+                    .heartNum(post.getHeartNum())
                     .commentNum(commentNum)
                     .build());
         }
@@ -66,12 +71,13 @@ public class PostService {
     public ResponseDto<?> getOnePost(Long postId) {
         Post post = postRepository.findById(postId)         //게시물 찾기
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));      //없을 시 찾을 수 없음
+        User user = tokenProvider.getUserFromAuthentication();
         Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
          return ResponseDto.success(PostDetailResponseDto.builder()      //responseDto 돌려주기
                 .post(post)
-                .heartNum(0L)
+                .heartNum(post.getHeartNum())
                 .commentNum(commentNum)
-                .isHeart(0L)
+                .isHeart(heartService.isHeart(post.getId(),user))
                 .build());
     }
 
