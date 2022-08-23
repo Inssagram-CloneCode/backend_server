@@ -29,7 +29,7 @@ public class PostController {
     @ApiOperation(value = "게시물 작성", notes = "게시물 작성 기능", response = PostCreateResponseDto.class)
     @PostMapping()
     public ResponseEntity<?> createPost(
-            @RequestPart PostRequestDto requestDto,
+            PostRequestDto requestDto,
             List<MultipartFile> imageFileList) {
 
         User user = tokenProvider.getUserFromAuthentication();

@@ -1,6 +1,5 @@
 package com.clonecode.inssagram.dto.response;
 
-import com.clonecode.inssagram.domain.Comment;
 import com.clonecode.inssagram.domain.Image;
 import com.clonecode.inssagram.domain.Post;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,10 +22,10 @@ public class PostDetailResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
-    private List<Comment> commentList;
+    private List<CommentResponseDto> commentList;
 
     @Builder
-    public PostDetailResponseDto(Post post, Long heartNum, Long commentNum, Long isHeart, List<Comment> commentList){
+    public PostDetailResponseDto(Post post, Long heartNum, Long commentNum, Long isHeart){
         this.postId = post.getId();
         this.user = new UserProfileResponseDto(post.getUser());
         this.postContents = post.getPostContents();
@@ -34,7 +33,7 @@ public class PostDetailResponseDto {
         this.heartNum = heartNum;
         this.commentNum = commentNum;
         this.isHeart = isHeart;
-        this.commentList = commentList;
+        this.commentList = post.getCommentList().stream().map(CommentResponseDto::new).collect(Collectors.toList());
         this.createdAt = post.getCreatedAt();
     }
 }
