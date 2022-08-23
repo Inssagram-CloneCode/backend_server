@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -52,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseDto<?> login(LoginRequestDto requestDto) {
         //유저 이메일 존재 체크
         User user = isPresentUser(requestDto.getEmail());
 
@@ -98,6 +97,31 @@ public class UserService {
     public User isPresentUser(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         return optionalUser.orElse(null);
+    }
+
+    public ResponseDto<?> getUserProfile() {
+        //유저 이메일 존재 체크
+        User loginUser = tokenProvider.getUserFromAuthentication();
+
+        return ResponseDto.success(
+                LoginResponseDto.builder()
+                        .userId(loginUser.getId())
+                        .email(loginUser.getEmail())
+                        .username(loginUser.getUsername())
+                        .profileImgUrl(loginUser.getProfileImageUrl())
+                        .build());
+    }
+
+    @Transactional
+    public ResponseDto<?> reload(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            return ResponseDto.fail(ErrorCode.INVALID_TOKEN);
+        }
+        User userFromRefreshTokenRepo = tokenProvider.getUserFromRefreshTokenRepo(request.getHeader("Refresh-Token"));
+        // 토큰 재발행
+        TokenDto tokenDto = tokenProvider.generateTokenDto(userFromRefreshTokenRepo);
+
+        return ResponseDto.success(tokenDto);
     }
 
 }
