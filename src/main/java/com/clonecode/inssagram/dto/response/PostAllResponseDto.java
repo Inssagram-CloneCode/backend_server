@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Getter
 public class PostAllResponseDto {
+    private Long postId;
     private UserProfileResponseDto user;
     private String postContents;
     private List<String> imageUrlList;
@@ -23,6 +24,7 @@ public class PostAllResponseDto {
 
     @Builder
     public PostAllResponseDto(Post post, Long heartNum, Long commentNum, Long isHeart){
+        this.postId = post.getId();
         this.user = new UserProfileResponseDto(post.getUser());
         this.postContents = post.getPostContents();
         this.imageUrlList = post.getImageList().stream().map(Image::getImageUrl).collect(Collectors.toList());
@@ -30,10 +32,5 @@ public class PostAllResponseDto {
         this.heartNum = heartNum;
         this.commentNum = commentNum;
         this.isHeart = isHeart;
-    }
-
-    @Builder
-    public PostAllResponseDto(Post post){
-        this.postContents = post.getPostContents();
     }
 }

@@ -1,7 +1,9 @@
 package com.clonecode.inssagram.dto.response;
 
 import com.clonecode.inssagram.domain.Comment;
+import lombok.Getter;
 
+@Getter
 public class CommentResponseDto {
     private UserProfileResponseDto user;
     private Long commentId;

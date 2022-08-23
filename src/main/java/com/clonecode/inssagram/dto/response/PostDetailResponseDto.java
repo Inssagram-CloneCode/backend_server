@@ -25,7 +25,7 @@ public class PostDetailResponseDto {
     private List<CommentResponseDto> commentList;
 
     @Builder
-    public PostDetailResponseDto(Post post, Long heartNum, Long commentNum, Long isHeart, List<CommentResponseDto> commentList){
+    public PostDetailResponseDto(Post post, Long heartNum, Long commentNum, Long isHeart){
         this.postId = post.getId();
         this.user = new UserProfileResponseDto(post.getUser());
         this.postContents = post.getPostContents();
