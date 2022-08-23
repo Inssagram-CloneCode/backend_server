@@ -13,25 +13,25 @@ import java.util.stream.Collectors;
 
 @Getter
 public class PostAllResponseDto {
-    private UserDto user;
+    private UserProfileDto user;
     private String postContents;
-    private List<String> imgUrlList;
+    private List<String> imageUrlList;
     private int likeNum;
     private int commentNum;
-    private int isLike;
+    private int isHeart;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
     @Builder
-    public PostAllResponseDto(User user,Post post, int likeNum, int commentNum, int isLike){
-        this.user =  new UserDto(post.getUser());
+    public PostAllResponseDto(User user, Post post, int likeNum, int commentNum, int isHeart){
+        this.user = new UserProfileDto(user);
         this.postContents = post.getPostContents();
-        this.imgUrlList = post.getImgList().stream().map(Image::getImageUrl).collect(Collectors.toList());
+        this.imageUrlList = post.getImageList().stream().map(Image::getImageUrl).collect(Collectors.toList());
         this.createdAt = post.getCreatedAt();
         this.likeNum = likeNum;
         this.commentNum = commentNum;
-        this.isLike = isLike;
+        this.isHeart = isHeart;
     }
 
     @Builder

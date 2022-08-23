@@ -5,10 +5,7 @@ import com.clonecode.inssagram.domain.Image;
 import com.clonecode.inssagram.domain.Post;
 import com.clonecode.inssagram.domain.User;
 import com.clonecode.inssagram.dto.request.PostRequestDto;
-import com.clonecode.inssagram.dto.response.PostAllResponseDto;
-import com.clonecode.inssagram.dto.response.PostDetailResponseDto;
-import com.clonecode.inssagram.dto.response.PostCreateResponseDto;
-import com.clonecode.inssagram.dto.response.PostUpdateResponseDto;
+import com.clonecode.inssagram.dto.response.*;
 import com.clonecode.inssagram.exception.EntityNotFoundException;
 import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
@@ -19,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.nio.file.attribute.FileStoreAttributeView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,11 +29,11 @@ public class PostService {
 
     @Transactional
     public PostCreateResponseDto writePost(User user, PostRequestDto requestDto, List<MultipartFile> imageFileList) {
-        List<String> imageUrlList = storageService.uploadFile(imageFileList, "/posts");
-        List<Image> collect = imageUrlList.stream().map(Image::new).collect(Collectors.toList());
+        List<String> imageUrlList = storageService.uploadFile(imageFileList, "/posts");      //이미지 S3에 업로드
+        List<Image> collect = imageUrlList.stream().map(Image::new).collect(Collectors.toList());   //String List를 Image List로 변환
         Post post = new Post(user, requestDto, collect);
         postRepository.save(post);      //게시물 db에 저장
-        int commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
+        int commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기 - 게시물을 저장 먼저 해야 id가 생겨서 count 가능
         return PostCreateResponseDto.builder()      //responseDto 돌려주기
                 .post(post)
                 .likeNum(0)
@@ -53,8 +48,8 @@ public class PostService {
         for (Post post : posts) {       //각 포스트마다 돌면서
             int commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
             postAllResponseDtoList.add(PostAllResponseDto.builder()     //빈 array에 responseDto 만들어서 넣어주기
-                            .user(user)
-                    .isLike(0)
+                    .user(post.getUser())
+                    .isHeart(0)
                     .post(post)
                     .likeNum(0)
                     .commentNum(commentNum)
@@ -74,7 +69,7 @@ public class PostService {
                 .post(post)
                 .likeNum(0)
                 .commentNum(commentNum)
-                .isLike(0)
+                .isHeart(0)
                 .commentList(commentList)
                 .build();
     }
