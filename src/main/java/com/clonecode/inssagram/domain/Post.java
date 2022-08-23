@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -17,13 +19,24 @@ public class Post extends Timestamped {
 
     private String postContents;
 
-    private String imgUrl = "none";
+ //양방향으로 묶고 싶지 않은데 transient?
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Image> imgList = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Post(User user, PostRequestDto postRequestDto) {
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
+
+
+    public Post(User user, PostRequestDto postRequestDto, List<Image> imgUrlList) {
         this.user = user;
         this.postContents = postRequestDto.getPostContents();
+        this.imgList = imgUrlList;
+    }
+
+    public void update(PostRequestDto requestDto){
+        this.postContents = requestDto.getPostContents();
     }
 }
