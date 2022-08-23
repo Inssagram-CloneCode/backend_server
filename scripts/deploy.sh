@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REPOSITORY=/home/ubuntu/app/step2
-PROJECT_NAME=backend_server
+PROJECT_NAME=Inssagram
 
 echo "> Build 파일 복사"
 
@@ -11,7 +11,7 @@ echo "> 현재 구동중인 애플리케이션 pid 확인"
 
 # 현재 수행중인 스프링 부트 어플리케이션의 프로세스 ID를 찾아서 실행중이면 종료.
 # 스프링부트 어플리케이션(backend_server)으로 된 다른 프로그램이 있을 수 있으므로 backend_server로 된 jar 프로세스를 찾고 ID를 반환해 변수에 넣음.
-CURRENT_PID=$(pgrep -fl backend_server | grep jar | awk '{print $1}')
+CURRENT_PID=$(pgrep -fl ${PROJECT_NAME} | grep jar | awk '{print $1}')
 
 echo "현재 구동중인 어플리케이션 pid: $CURRENT_PID"
 
