@@ -22,8 +22,16 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column
+    private Long heartNum;
+
     public Post(User user, PostRequestDto postRequestDto) {
         this.user = user;
         this.postContents = postRequestDto.getPostContents();
     }
+
+    public void count(Long heartNum) {
+        this.heartNum = heartNum;
+    }
+
 }
