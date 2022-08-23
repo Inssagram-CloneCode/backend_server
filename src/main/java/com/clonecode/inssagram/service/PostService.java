@@ -10,6 +10,7 @@ import com.clonecode.inssagram.exception.EntityNotFoundException;
 import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
 import com.clonecode.inssagram.repository.CommentRepository;
+import com.clonecode.inssagram.repository.ImageRepository;
 import com.clonecode.inssagram.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,72 +26,77 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final ImageRepository imageRepository;
     private final StorageService storageService;
 
     @Transactional
-    public PostCreateResponseDto writePost(User user, PostRequestDto requestDto, List<MultipartFile> imageFileList) {
+    public ResponseDto<?> writePost(User user, PostRequestDto requestDto, List<MultipartFile> imageFileList) {
         List<String> imageUrlList = storageService.uploadFile(imageFileList, "/posts");      //이미지 S3에 업로드
-        List<Image> collect = imageUrlList.stream().map(Image::new).collect(Collectors.toList());   //String List를 Image List로 변환
-        Post post = new Post(user, requestDto, collect);
+        Post post = new Post(user, requestDto);
         postRepository.save(post);      //게시물 db에 저장
-        int commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기 - 게시물을 저장 먼저 해야 id가 생겨서 count 가능
-        return PostCreateResponseDto.builder()      //responseDto 돌려주기
+        List<Image> collect = imageUrlList.stream().map(image->new Image(image,post)).collect(Collectors.toList());   //String List를 Image List로 변환
+        imageRepository.saveAll(collect);
+        Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기 - 게시물을 저장 먼저 해야 id가 생겨서 count 가능
+        return ResponseDto.success(PostCreateResponseDto.builder()      //responseDto 돌려주기
                 .post(post)
-                .likeNum(0)
+                .imageUrl(collect.get(0).getImageUrl())
+                .heartNum(0L)
                 .commentNum(commentNum)
-                .build();
+                .build());
     }
 
     //전체 게시글 조회
-    public List<PostAllResponseDto> getAllPosts() {
+    @Transactional
+    public ResponseDto<?> getAllPosts() {
         List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();      //생성시간 늦은 순으로 정렬해서 찾기
         List<PostAllResponseDto> postAllResponseDtoList = new ArrayList<>();    //PostAllResponseDto 빈 array 생성
         for (Post post : posts) {       //각 포스트마다 돌면서
-            int commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
-            postAllResponseDtoList.add(PostAllResponseDto.builder()     //빈 array에 responseDto 만들어서 넣어주기
-                    .user(post.getUser())
-                    .isHeart(0)
+            Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
+            postAllResponseDtoList.add(PostAllResponseDto.builder()//빈 array에 responseDto 만들어서 넣어주기
+                    .isHeart(0L)
                     .post(post)
-                    .likeNum(0)
+                    .heartNum(0L)
                     .commentNum(commentNum)
                     .build());
         }
-        return postAllResponseDtoList;      //array 돌려주기
+        return ResponseDto.success(postAllResponseDtoList);      //array 돌려주기
     }
 
     //상세 게시글 조회
-    public PostDetailResponseDto getOnePost(Long postId) {
+    @Transactional
+    public ResponseDto<?> getOnePost(Long postId) {
         Post post = postRepository.findById(postId)         //게시물 찾기
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));      //없을 시 찾을 수 없음
-        int commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
+        Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
         List<Comment> commentList = commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);      //게시물 id별 댓글 리스트 ->좋아요 높은 순으로 수정
-        return PostDetailResponseDto.builder()      //responseDto 돌려주기
-
+        return ResponseDto.success(PostDetailResponseDto.builder()      //responseDto 돌려주기
                 .post(post)
-                .likeNum(0)
+                .heartNum(0L)
                 .commentNum(commentNum)
-                .isHeart(0)
+                .isHeart(0L)
                 .commentList(commentList)
-                .build();
+                .build());
     }
 
     //게시글 수정
     @Transactional
-    public PostUpdateResponseDto updateOnePost(Long postId, User user, PostRequestDto requestDto) {
+    public ResponseDto<?> updateOnePost(Long postId, User user, PostRequestDto requestDto) {
         Post post = postRepository.findById(postId)      //게시물 찾기
                 .orElseThrow(() ->new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));       //없을 시 찾을 수 없음
-        if(user.getUserId().equals(post.getUser().getUserId())){        //로그인한 사용자=게시물 작성자인지 확인
-            post.update(requestDto);      //맞을 시 업데이트
-            postRepository.save(post);      //업데이트된 내용 저장 ->현재는 postContents만 업데이트인데 imgUrl은 수정 불가?
-        }throw new InvalidValueException(ErrorCode.POST_UNAUTHORIZED);      //아닐 시 권한 없음
+        if(!user.getId().equals(post.getUser().getId())){        //로그인한 사용자=게시물 작성자인지 확인
+            throw new InvalidValueException(ErrorCode.POST_UNAUTHORIZED);    //아닐 시 권한 없음
+        }
+        post.update(requestDto);      //맞을 시 업데이트
+        return ResponseDto.success(new PostUpdateResponseDto(post));
     }
 
     //게시글 삭제
     public void deleteOnePost(Long postId, User user) {
         Post post = postRepository.findById(postId)     //게시물 찾기
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));      //없을 시 찾을 수 없음
-        if(user.getUserId().equals(post.getUser().getUserId())){        //로그인한 사용자=게시물 작성자인지 확인
-            postRepository.deleteById(postId);      //맞을 시 삭제
-        }throw new InvalidValueException(ErrorCode.POST_UNAUTHORIZED);      //아닐 시 권한 없음
+        if(!user.getId().equals(post.getUser().getId())){        //로그인한 사용자=게시물 작성자인지 확인
+            throw new InvalidValueException(ErrorCode.POST_UNAUTHORIZED);   //아닐 시 권한 없음
+        }
+        postRepository.deleteById(postId);      //맞을 시 삭제
     }
 }

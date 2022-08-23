@@ -44,8 +44,8 @@ public class CommentService {
     public ResponseDto<?> deleteComment(Long commentId, UserDetailsImpl userDetails) {
         commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
-        Long writerId = commentRepository.findById(commentId).get().getUser().getUserId();
-        Long userId = tokenProvider.getUserFromAuthentication().getUserId();
+        Long writerId = commentRepository.findById(commentId).get().getUser().getId();
+        Long userId = tokenProvider.getUserFromAuthentication().getId();
         if (Objects.equals(writerId, userId)) {
             commentRepository.deleteById(commentId);
         } else {

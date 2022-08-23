@@ -3,6 +3,8 @@ package com.clonecode.inssagram.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.clonecode.inssagram.exception.InvalidValueException;
+import com.clonecode.inssagram.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +36,7 @@ public class StorageService {
                 s3.putObject(new PutObjectRequest(bucket, s3Directory+fileName, inputStream, objectMetadata));
                 imageUrlList.add(s3.getUrl(bucket, s3Directory+fileName).toString());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new InvalidValueException(ErrorCode.UPLOAD_FAILED);
             }
         }
         return imageUrlList;

@@ -1,6 +1,5 @@
 package com.clonecode.inssagram.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +14,6 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "postId")
     private Post post;
@@ -23,7 +21,8 @@ public class Image {
     @NotNull
     private String imageUrl;
 
-    public Image(String imageUrl) {
+    public Image(String imageUrl, Post post) {
         this.imageUrl = imageUrl;
+        this.post = post;
     }
 }

@@ -4,14 +4,14 @@ import com.clonecode.inssagram.domain.User;
 import lombok.Getter;
 
 @Getter
-public class UserProfileDto {
+public class UserProfileResponseDto {
      private Long userId;
      private String username;
      private String profileImageUrl;
 
 
-     public UserProfileDto(User user){
-          this.userId = user.getUserId();
+     public UserProfileResponseDto(User user){
+          this.userId = user.getId();
           this.username= user.getUsername();
           this.profileImageUrl = user.getProfileImageUrl();
      }
