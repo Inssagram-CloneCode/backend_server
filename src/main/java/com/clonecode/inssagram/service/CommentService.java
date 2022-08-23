@@ -43,10 +43,10 @@ public class CommentService {
     @Transactional
     public ResponseDto<?> deleteComment(Long commentId, UserDetailsImpl userDetails) {
         Long writerId = commentRepository.findById(commentId)
-                .map(comment -> comment.getUser().getUserId())
+                .map(comment -> comment.getUser().getId())
                 .orElseThrow(
                         () -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
-        Long userId = tokenProvider.getUserFromAuthentication().getUserId();
+        Long userId = tokenProvider.getUserFromAuthentication().getId();
         if (Objects.equals(writerId, userId)) {
             commentRepository.deleteById(commentId);
         } else {

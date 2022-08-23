@@ -40,6 +40,7 @@ public class HeartService {
         if (requestDto.getIsHeart() == 0) {
             if (chkPostHeart.isEmpty()){
                 approveHeartRequest(new Heart(user, post, 1L));
+
             } else {
                 chkPostHeart.get().setIsHeart(1L);
             }
@@ -71,6 +72,21 @@ public class HeartService {
 
     public Long chkHeart(Post post) {
         return heartRepository.countAllByPostAndIsHeart(post, 1L);
+    }
+    public Long isHeart(Long postId, User user) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () ->  new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));
+
+        if (tokenProvider.getUserFromAuthentication() == null) {
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+        }
+        Optional<Heart> chkPostHeart = heartRepository.findByPostAndUser(post, user);
+        if (chkPostHeart.isEmpty()) {
+            return 0L;
+        }
+
+        return chkPostHeart.get().getIsHeart();
+
     }
 
 }

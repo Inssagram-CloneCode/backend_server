@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 public class Post extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,26 +27,23 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
-    @Column
-    private Long heartNum;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
+    @Column
+    private Long heartNum;
 
     public Post(User user, PostRequestDto postRequestDto) {
         this.user = user;
         this.postContents = postRequestDto.getPostContents();
     }
 
+    public void update(PostRequestDto requestDto){
+        this.postContents = requestDto.getPostContents();
+    }
 
     public void count(Long heartNum) {
         this.heartNum = heartNum;
-    }
-
-    public void update(PostRequestDto requestDto){
-        this.postContents = requestDto.getPostContents();
     }
 
 }
