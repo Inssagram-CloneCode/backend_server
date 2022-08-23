@@ -2,10 +2,12 @@ package com.clonecode.inssagram.service;
 
 import com.clonecode.inssagram.domain.User;
 import com.clonecode.inssagram.dto.TokenDto;
+import com.clonecode.inssagram.dto.request.EditUserProfileRequestDto;
 import com.clonecode.inssagram.dto.request.LoginRequestDto;
 import com.clonecode.inssagram.dto.request.SignUpRequestDto;
 import com.clonecode.inssagram.dto.response.LoginResponseDto;
 import com.clonecode.inssagram.dto.response.ResponseDto;
+import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
 import com.clonecode.inssagram.jwt.TokenProvider;
 import com.clonecode.inssagram.repository.UserRepository;
@@ -13,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -27,6 +31,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final TokenProvider tokenProvider;
+
+    private final StorageService storageService;
 
     @Transactional
     public ResponseDto<?> createUser(SignUpRequestDto requestDto) {
@@ -124,4 +130,15 @@ public class UserService {
         return ResponseDto.success(tokenDto);
     }
 
+    @Transactional
+    public void editUserProfile(EditUserProfileRequestDto editUserProfileRequestDto, List<MultipartFile> profileImageFile, Long userId) {
+        //S3 버킷에 이미지 저장 후 url 받아옴.
+        String userProfileImageUrl = storageService.uploadFile(profileImageFile, "userProfile/").get(0);
+        //영속성 컨텍스트 User 넣음
+        User user = userRepository.findById(userId).orElseThrow(() -> new InvalidValueException(ErrorCode.USER_NOT_FOUND));
+        
+        //영속성 컨텍스트 update 변경
+        user.update(editUserProfileRequestDto, userProfileImageUrl);
+        // Transaction 끝날 때 컨텍스트 스탭샷과 비교하여 변경 감지 후 flush되며 update 쿼리 나감.
+    }
 }

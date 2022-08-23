@@ -1,5 +1,6 @@
 package com.clonecode.inssagram.controller;
 
+import com.clonecode.inssagram.dto.request.EditUserProfileRequestDto;
 import com.clonecode.inssagram.dto.request.LoginRequestDto;
 import com.clonecode.inssagram.dto.request.SignUpRequestDto;
 import com.clonecode.inssagram.dto.response.LoginResponseDto;
@@ -10,13 +11,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @Api(tags = {"유저 API Controller"})
 @RequestMapping(path = "/api")
@@ -43,6 +43,14 @@ public class UserController {
     public ResponseEntity<?> logout(HttpServletRequest request) {
         userService.logout(request);
         return new ResponseEntity<>("로그아웃", HttpStatus.valueOf(HttpStatus.OK.value()));
+    }
+
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "유저 프로필 수정", notes = "유저 프로필 수정 기능")
+    public ResponseEntity<?> editUserProfile(EditUserProfileRequestDto editUserProfileRequestDto,
+                                             List<MultipartFile> profileImageFile, @PathVariable Long userId) {
+        userService.editUserProfile(editUserProfileRequestDto, profileImageFile, userId);
+        return new ResponseEntity<>("회원 정보 수정이 성공적으로 반영되었습니다", HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
