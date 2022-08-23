@@ -72,7 +72,7 @@ public class UserService {
         //로그인DTO 리턴
         return ResponseDto.success(
                 LoginResponseDto.builder()
-                        .userId(user.getUserId())
+                        .userId(user.getId())
                         .email(user.getEmail())
                         .username(user.getUsername())
                         .profileImgUrl(user.getProfileImageUrl())
