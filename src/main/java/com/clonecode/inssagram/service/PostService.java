@@ -1,6 +1,5 @@
 package com.clonecode.inssagram.service;
 
-import com.clonecode.inssagram.domain.Comment;
 import com.clonecode.inssagram.domain.Image;
 import com.clonecode.inssagram.domain.Post;
 import com.clonecode.inssagram.domain.User;
@@ -31,7 +30,7 @@ public class PostService {
 
     @Transactional
     public ResponseDto<?> writePost(User user, PostRequestDto requestDto, List<MultipartFile> imageFileList) {
-        List<String> imageUrlList = storageService.uploadFile(imageFileList, "/posts");      //이미지 S3에 업로드
+        List<String> imageUrlList = storageService.uploadFile(imageFileList, "posts/");      //이미지 S3에 업로드
         Post post = new Post(user, requestDto);
         postRepository.save(post);      //게시물 db에 저장
         List<Image> collect = imageUrlList.stream().map(image->new Image(image,post)).collect(Collectors.toList());   //String List를 Image List로 변환
@@ -68,13 +67,11 @@ public class PostService {
         Post post = postRepository.findById(postId)         //게시물 찾기
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));      //없을 시 찾을 수 없음
         Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
-        List<Comment> commentList = commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);      //게시물 id별 댓글 리스트 ->좋아요 높은 순으로 수정
-        return ResponseDto.success(PostDetailResponseDto.builder()      //responseDto 돌려주기
+         return ResponseDto.success(PostDetailResponseDto.builder()      //responseDto 돌려주기
                 .post(post)
                 .heartNum(0L)
                 .commentNum(commentNum)
                 .isHeart(0L)
-                .commentList(commentList)
                 .build());
     }
 

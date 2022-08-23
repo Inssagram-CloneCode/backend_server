@@ -27,6 +27,7 @@ public class Post extends Timestamped {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt DESC")
     private List<Comment> commentList = new ArrayList<>();
 
 
