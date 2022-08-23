@@ -1,5 +1,6 @@
 package com.clonecode.inssagram.domain;
 
+import com.clonecode.inssagram.dto.request.EditUserProfileRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,4 +61,9 @@ public class User extends Timestamped {
         return passwordEncoder.matches(password, this.password);
     }
 
+    public void update(EditUserProfileRequestDto editUserProfileRequestDto, String userProfileImageUrl) {
+        this.username = editUserProfileRequestDto.getUsername();
+        this.profileImageUrl = userProfileImageUrl;
+        this.intro = editUserProfileRequestDto.getIntro();
+    }
 }
