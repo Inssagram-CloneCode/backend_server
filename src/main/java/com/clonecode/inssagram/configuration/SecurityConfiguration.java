@@ -75,6 +75,7 @@ public class SecurityConfiguration {
                         "/webjars/**").permitAll()   //swagger 해제
                 .antMatchers("/api/signup").permitAll()   //signup 해제
                 .antMatchers("/api/login").permitAll()   //login 해제
+                .antMatchers("/api/users/reload").permitAll()   //토큰 재발급 해제
                 .anyRequest().authenticated()
 
                 .and()

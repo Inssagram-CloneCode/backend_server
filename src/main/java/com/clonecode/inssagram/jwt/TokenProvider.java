@@ -5,6 +5,7 @@ import com.clonecode.inssagram.domain.User;
 import com.clonecode.inssagram.domain.UserDetailsImpl;
 import com.clonecode.inssagram.dto.TokenDto;
 import com.clonecode.inssagram.dto.response.ResponseDto;
+import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
 import com.clonecode.inssagram.repository.RefreshTokenRepository;
 import com.clonecode.inssagram.shared.Authority;
@@ -96,6 +97,13 @@ public class TokenProvider {
         }
         //ContextHolder에서 User 리턴
         return ((UserDetailsImpl) authentication.getPrincipal()).getUser();
+    }
+
+    //User 얻기위한 로직
+    public User getUserFromRefreshTokenRepo(String refreshToken) {
+        return refreshTokenRepository.findByRefreshTokenValue(refreshToken)
+                .map(RefreshToken::getUser)
+                .orElseThrow( () -> new InvalidValueException(ErrorCode.INVALID_TOKEN));
     }
 
     //토큰 만료 확인
