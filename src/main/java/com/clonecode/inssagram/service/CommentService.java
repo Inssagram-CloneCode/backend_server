@@ -41,9 +41,10 @@ public class CommentService {
     // 댓글 삭제
     @Transactional
     public ResponseDto<?> deleteComment(Long commentId, UserDetailsImpl userDetails) {
-        commentRepository.findById(commentId).orElseThrow(
-                () -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
-        Long writerId = commentRepository.findById(commentId).get().getUser().getUserId();
+        Long writerId = commentRepository.findById(commentId)
+                .map(comment -> comment.getUser().getUserId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
         Long userId = tokenProvider.getUserFromAuthentication().getUserId();
         if (Objects.equals(writerId, userId)) {
             commentRepository.deleteById(commentId);
@@ -53,9 +54,6 @@ public class CommentService {
 
         return ResponseDto.success("댓글 삭제가 완료되었습니다.");
     }
-
-
-
 
 
     // 댓글 조회(Post 조회 시 댓글 전체 리스트 Response)
