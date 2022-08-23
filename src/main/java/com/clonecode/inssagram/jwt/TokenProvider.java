@@ -68,7 +68,7 @@ public class TokenProvider {
 
         //DB저장하기 위한 토큰 Entity 생성
         RefreshToken refreshTokenObject = RefreshToken.builder()
-                .id(user.getUserId())
+                .id(user.getId())
                 .user(user)
                 .refreshTokenValue(refreshToken)
                 .build();

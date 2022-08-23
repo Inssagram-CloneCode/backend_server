@@ -9,25 +9,25 @@ import javax.validation.constraints.NotBlank;
 
 
 @Getter
-public class PostResponseDto {
+public class PostCreateResponseDto {
     @ApiModelProperty(example = "게시물 Id")
     @NotBlank
     private Long id;
     @ApiModelProperty(example = "사진 url")
     @NotBlank
-    private String imgUrl;
+    private String imageUrl;
     @ApiModelProperty(example = "게시물 좋아요 수")
     @NotBlank
-    private int likeNum;
+    private Long heartNum;
     @ApiModelProperty(example = "게시물 댓글 수")
     @NotBlank
-    private int commentNum;
+    private Long commentNum;
 
     @Builder
-    public PostResponseDto(Post post, int likeNum, int commentNum){
+    public PostCreateResponseDto(Post post, String imageUrl, Long heartNum, Long commentNum){
         this.id = post.getId();
-        this.imgUrl = post.getImgUrl();
-        this.likeNum = likeNum;
+        this.imageUrl = imageUrl;
+        this.heartNum = heartNum;
         this.commentNum = commentNum;
     }
 }

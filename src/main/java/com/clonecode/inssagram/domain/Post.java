@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -17,21 +19,33 @@ public class Post extends Timestamped {
 
     private String postContents;
 
-    private String imgUrl = "none";
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> imageList = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
     @Column
     private Long heartNum;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
 
     public Post(User user, PostRequestDto postRequestDto) {
         this.user = user;
         this.postContents = postRequestDto.getPostContents();
     }
 
+
     public void count(Long heartNum) {
         this.heartNum = heartNum;
+    }
+
+    public void update(PostRequestDto requestDto){
+        this.postContents = requestDto.getPostContents();
     }
 
 }
