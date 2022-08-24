@@ -10,13 +10,13 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 public class PostCreateResponseDto {
-    @ApiModelProperty(example = "게시물 Id")
+    @ApiModelProperty(example = "게시물 DB Id")
     @NotBlank
     private Long id;
-    @ApiModelProperty(example = "사진 url")
+    @ApiModelProperty(example = "게시물 사진 URL")
     @NotBlank
     private String imageUrl;
-    @ApiModelProperty(example = "게시물 좋아요 수")
+    @ApiModelProperty(example = "게시물 하트 수")
     @NotBlank
     private Long heartNum;
     @ApiModelProperty(example = "게시물 댓글 수")

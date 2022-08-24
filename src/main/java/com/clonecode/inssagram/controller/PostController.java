@@ -10,15 +10,18 @@ import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
 import com.clonecode.inssagram.jwt.TokenProvider;
 import com.clonecode.inssagram.service.PostService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Api(tags = {"게시물 API Controller"})
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -27,10 +30,10 @@ public class PostController {
     private final TokenProvider tokenProvider;
 
     @ApiOperation(value = "게시물 작성", notes = "게시물 작성 기능", response = PostCreateResponseDto.class)
-    @PostMapping()
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createPost(
-            PostRequestDto requestDto,
-            List<MultipartFile> imageFileList) {
+            @RequestPart PostRequestDto requestDto,
+            @RequestPart List<MultipartFile> imageFileList) {
 
         User user = tokenProvider.getUserFromAuthentication();
         if (imageFileList == null) {
