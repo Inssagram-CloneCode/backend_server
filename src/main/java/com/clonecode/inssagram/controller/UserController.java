@@ -47,8 +47,8 @@ public class UserController {
 
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.PUT)
     @ApiOperation(value = "유저 프로필 수정", notes = "유저 프로필 수정 기능")
-    public ResponseEntity<?> editUserProfile(EditUserProfileRequestDto editUserProfileRequestDto,
-                                             List<MultipartFile> profileImageFile, @PathVariable Long userId) {
+    public ResponseEntity<?> editUserProfile(@RequestPart EditUserProfileRequestDto editUserProfileRequestDto,
+                                             @RequestPart List<MultipartFile> profileImageFile, @PathVariable Long userId) {
         userService.editUserProfile(editUserProfileRequestDto, profileImageFile, userId);
         return new ResponseEntity<>("회원 정보 수정이 성공적으로 반영되었습니다", HttpStatus.valueOf(HttpStatus.OK.value()));
     }
