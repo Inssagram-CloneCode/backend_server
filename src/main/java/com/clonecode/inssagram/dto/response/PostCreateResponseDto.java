@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 public class PostCreateResponseDto {
     @ApiModelProperty(example = "게시물 DB Id")
     @NotBlank
-    private Long id;
+    private Long postId;
     @ApiModelProperty(example = "게시물 사진 URL")
     @NotBlank
     private String imageUrl;
@@ -25,7 +25,7 @@ public class PostCreateResponseDto {
 
     @Builder
     public PostCreateResponseDto(Post post, String imageUrl, Long heartNum, Long commentNum){
-        this.id = post.getId();
+        this.postId = post.getId();
         this.imageUrl = imageUrl;
         this.heartNum = heartNum;
         this.commentNum = commentNum;
