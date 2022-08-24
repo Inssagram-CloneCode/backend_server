@@ -12,10 +12,12 @@ import com.clonecode.inssagram.global.error.ErrorCode;
 import com.clonecode.inssagram.jwt.TokenProvider;
 import com.clonecode.inssagram.repository.HeartRepository;
 import com.clonecode.inssagram.repository.PostRepository;
+import com.clonecode.inssagram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class HeartService {
     private final HeartRepository heartRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
 
 
@@ -87,6 +90,17 @@ public class HeartService {
 
         return chkPostHeart.get().getIsHeart();
 
+    }
+
+
+    public Long totalHeartsByUser(Long userId) {
+        User user = userRepository.findById(userId). orElseThrow(
+                () -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+        List<Post> postList = postRepository.findAllByUserId(userId);
+
+        Long heartTotalNum = postList.stream().mapToLong(Post::getHeartNum).sum();
+
+        return heartTotalNum;
     }
 
 }
