@@ -25,17 +25,17 @@ public class SignUpRequestDto {
     @NotBlank
     @Size(min = 4, max = 12)
     @Pattern(regexp = "[a-zA-Z\\d]*${3,12}")
-    @ApiModelProperty(example = "사용자 이름(별명)")
+    @ApiModelProperty(example = "tester@inssa.com")
     private String username;
 
     //영어 소문자, 숫자 4~32자리
     @NotBlank
     @Size(min = 4, max = 32)
     @Pattern(regexp = "[a-z\\d]*${3,32}")
-    @ApiModelProperty(example = "사용자 비밀번호")
+    @ApiModelProperty(example = "1234")
     private String password;
 
     @NotBlank
-    @ApiModelProperty(example = "사용자 비밀번호 확인")
+    @ApiModelProperty(example = "1234")
     private String passwordCheck;
 }
