@@ -1,0 +1,69 @@
+# 언어와 jdk의 버전을 지정한다.
+language: java
+jdk:
+  - openjdk11
+
+# 어느 브랜치가 push 될 때 수행할지 지정한다. 
+# 오직 main 브랜치가 push될 때 수행하도록 지정하였다.
+branches:
+  only:
+    - main
+
+# 빌드 전에 gradlew의 권한을 추가한다.
+before_install:
+  - chmod +x gradlew
+
+# Travis CI 서버의 Home
+# gradle을 통하여 의존성을 받게 되면 이를 캐시하여 배포할 때 마다 다시 받지 않도록 설정한다.
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.gradle'
+
+# main 브랜치에 push 되면 수행되는 명령어이다. 
+# 프로젝트 내에 권한이 추가된 gradlew를 활용하여 clean, build를 진행한다.
+script: "./gradlew clean build"
+
+# CI 실행 완료 시 작성한 이메일로 알람
+notifications:
+  email:
+    recipients:
+      - v_donguk@naver.com
+
+# deploy 명령어가 실행되기 전 전처리 과정
+# CodeDeploy는 Jar 파일을 인식 못하므로 Jar+기타 설정 파일들을 모아 압축함.
+before_deploy:
+  - mkdir -p before-deploy # zip에 파합시킬 파일들을 담을 디렉토리 생성
+  - cp scripts/*.sh before-deploy/ # 스크립트 파일 복사
+  - cp appspec.yml before-deploy/ # CodeDeploy 설정 파일 복사
+  - cp build/libs/*.jar before-deploy/ # jar 배포파일 복사
+  - cd before-deploy && zip -r before-deploy * # before-deploy로 이동하여 전체 파일 압축함
+  - cd ../ && mkdir -p deploy # 상위 디렉토리 이동하여 deploy 디렉토리 생성
+  - mv before-deploy/before-deploy.zip deploy/backend_server.zip # deploy로 zip파일 이동
+
+# S3 파일 업로드 혹은 CodeDeploy로 배포 등 외부 서비스와 연동될 행위들을 선언.
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # Travis repo settings에서 설정된 값
+    secret_access_key: $AWS_SECRET_KEY # Travis repo settings에서 설정된 값
+    bucket: ldu-springboot-build # S3 버킷 이름
+    region: ap-northeast-2 # 지역이름
+    skip_cleanup: true
+    acl: private # zip 파일 접근을 private으로 설정
+    local_dir: deploy # before_deploy에서 생성한 디렉토리에 있는 파일들만 S3로 정송
+    on:
+      all_branches: true
+      
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # Travis repo settings에서 설정된 값
+    secret_access_key: $AWS_SECRET_KEY # Travis repo settings에서 설정된 값
+    bucket: ldu-springboot-build # S3 버킷 이름
+    key: backend_server.zip # 빌드 파일을 압축해서 전달
+    bundle_type: zip # 압축 확장자
+    application: backend_server # 웹 콘솔에서 등록한 CodeDeploy 애플리케이션
+    deployment_group: backend_server-group # 웹 콘솔에서 등록한 CodeDeploy 배포 그룹 이름
+    region: ap-northeast-2 # 지역이름
+    wait-until-deployed: true
+    on:
+      all_branches: true
+  

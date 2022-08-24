@@ -1,19 +1,4 @@
 spring:
-  h2:
-    console:
-      enabled: true
-
-  datasource:
-    url: jdbc:h2:mem:inssagram
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-#  datasource:
-#    url: jdbc:mysql://ldudb.cs3wzmj0phr7.ap-northeast-2.rds.amazonaws.com:3306/
-#    username: admin
-#    password: 1234
-
   jpa:
     show_sql: true
     hibernate:
@@ -21,11 +6,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-#  redis:
-#    host: localhost # 디폴트
-#    port: 6379 # 디폴트
-
 
 server:
   error:
