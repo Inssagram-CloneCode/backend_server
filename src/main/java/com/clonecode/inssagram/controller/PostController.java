@@ -48,7 +48,7 @@ public class PostController {
         if (tokenProvider.getUserFromAuthentication() == null) {
             throw new InvalidValueException(ErrorCode.LOGIN_REQUIRED);
         }
-        return new ResponseEntity<>(postService.getAllPosts(), HttpStatus.valueOf(HttpStatus.FOUND.value()));
+        return new ResponseEntity<>(postService.getAllPosts(), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @ApiOperation(value = "상세 게시물 조회", notes = "상세 게시물 조회 기능", response = PostDetailResponseDto.class)
@@ -57,7 +57,7 @@ public class PostController {
         if (tokenProvider.getUserFromAuthentication() == null) {
             throw new InvalidValueException(ErrorCode.LOGIN_REQUIRED);
         }
-        return new ResponseEntity<>(postService.getOnePost(postId), HttpStatus.valueOf(HttpStatus.FOUND.value()));
+        return new ResponseEntity<>(postService.getOnePost(postId), HttpStatus.valueOf(HttpStatus.OK.value()));
     }
 
     @ApiOperation(value = "게시물 수정", notes = "게시물 수정 기능", response = PostUpdateResponseDto.class)
