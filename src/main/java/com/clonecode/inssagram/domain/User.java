@@ -1,5 +1,6 @@
 package com.clonecode.inssagram.domain;
 
+import com.clonecode.inssagram.dto.request.EditUserProfileRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class User extends Timestamped {
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long userId;
+    private Long id;
 
     // 반드시 값을 가지도록 합니다.
     @Column(nullable = false)
@@ -48,7 +49,7 @@ public class User extends Timestamped {
             return false;
         }
         User user = (User) o;
-        return userId != null && Objects.equals(userId, user.userId);
+        return id != null && Objects.equals(id, user.id);
     }
 
     @Override
@@ -60,4 +61,9 @@ public class User extends Timestamped {
         return passwordEncoder.matches(password, this.password);
     }
 
+    public void update(EditUserProfileRequestDto editUserProfileRequestDto, String userProfileImageUrl) {
+        this.username = editUserProfileRequestDto.getUsername();
+        this.profileImageUrl = userProfileImageUrl;
+        this.intro = editUserProfileRequestDto.getIntro();
+    }
 }
