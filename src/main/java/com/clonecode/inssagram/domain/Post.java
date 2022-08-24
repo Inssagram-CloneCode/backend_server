@@ -34,9 +34,10 @@ public class Post extends Timestamped {
     @Column
     private Long heartNum;
 
-    public Post(User user, PostRequestDto postRequestDto) {
+    public Post(User user, PostRequestDto postRequestDto, Long heartNum) {
         this.user = user;
         this.postContents = postRequestDto.getPostContents();
+        this.heartNum = heartNum;
     }
 
     public void update(PostRequestDto requestDto){
