@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 public class Post extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +31,8 @@ public class Post extends Timestamped {
     @OrderBy("createdAt DESC")
     private List<Comment> commentList = new ArrayList<>();
 
+    @Column
+    private Long heartNum;
 
     public Post(User user, PostRequestDto postRequestDto) {
         this.user = user;
@@ -39,4 +42,9 @@ public class Post extends Timestamped {
     public void update(PostRequestDto requestDto){
         this.postContents = requestDto.getPostContents();
     }
+
+    public void count(Long heartNum) {
+        this.heartNum = heartNum;
+    }
+
 }

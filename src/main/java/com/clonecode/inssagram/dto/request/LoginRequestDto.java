@@ -13,11 +13,11 @@ import javax.validation.constraints.NotBlank;
 public class LoginRequestDto {
 
     @NotBlank
-    @ApiModelProperty(example = "사용자 이메일")
+    @ApiModelProperty(example = "tester@inssa.com")
     private String email;
 
     @NotBlank
-    @ApiModelProperty(example = "사용자 비밀번호")
+    @ApiModelProperty(example = "1234")
     private String password;
 
 }
