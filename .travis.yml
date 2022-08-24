@@ -14,8 +14,7 @@ branches:
 # gradlew의 권한을 추가한다.
 before_install:
 - mkdir ./src/main/resources
-- openssl aes-256-cbc -K $encrypted_f27943cb6563_key -iv $encrypted_f27943cb6563_iv
-  -in application.tar.enc -out src/main/resources/application.tar -d
+- openssl enc -aes-256-cbc -in application.tar.enc -out src/main/resources/application.tar -K $encrypted_f27943cb6563_key -iv $encrypted_f27943cb6563_iv
 - tar xvf ./src/main/resources/application.tar
 - chmod +x gradlew
 
