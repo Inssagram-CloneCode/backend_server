@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -87,16 +88,18 @@ public class UserService {
     }
 
     //로그아웃
-    public ResponseDto<?> logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            return ResponseDto.fail(ErrorCode.INVALID_TOKEN);
+            ResponseDto.fail(ErrorCode.INVALID_TOKEN);
+            return;
         }
         User user = tokenProvider.getUserFromAuthentication();
         if (null == user) {
-            return ResponseDto.fail(ErrorCode.NOT_LOGIN_STATE);
+            ResponseDto.fail(ErrorCode.NOT_LOGIN_STATE);
+            return;
         }
 
-        return tokenProvider.deleteRefreshToken(user);
+        tokenProvider.deleteRefreshToken(user);
     }
 
     @Transactional(readOnly = true)
@@ -136,7 +139,15 @@ public class UserService {
         String userProfileImageUrl = storageService.uploadFile(profileImageFile, "userProfile/").get(0);
         //영속성 컨텍스트 User 넣음
         User user = userRepository.findById(userId).orElseThrow(() -> new InvalidValueException(ErrorCode.USER_NOT_FOUND));
-        
+
+        User userFromAuthentication = tokenProvider.getUserFromAuthentication();
+
+        //로그인한 사람과 변경하는 유저 프로필의 값이 똑같아야 변경가능함.
+        if (!Objects.equals(user.getId(), userFromAuthentication.getId())) {
+            //다르면 exception
+            throw new InvalidValueException(ErrorCode.USER_UNAUTHORIZED);
+        }
+
         //영속성 컨텍스트 update 변경
         user.update(editUserProfileRequestDto, userProfileImageUrl);
         // Transaction 끝날 때 컨텍스트 스탭샷과 비교하여 변경 감지 후 flush되며 update 쿼리 나감.
