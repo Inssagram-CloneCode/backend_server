@@ -19,7 +19,7 @@ public class MyPageResponseDto {
     @ApiModelProperty(example = "사용자가 받은 총 하트 수")
     private Long heartTotalNum;
 
-    @ApiModelProperty(example = "사용자가 작성한 게시글 목록록")
+    @ApiModelProperty(example = "사용자가 작성한 게시글 목록")
    private List<PostCreateResponseDto> contentList;
 
     @Builder
