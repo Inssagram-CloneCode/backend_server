@@ -62,6 +62,7 @@ API 설계 : https://www.notion.so/f61f2cf64ae24200aa4e2009ccf3353b?v=155e797dcf
 
 ## 📽 시연 영상
   
+[Inssagram Demonstration Video](https://www.youtube.com/watch?v=rFAQniWz5fI)
 
 ## 📋 서비스 아키텍쳐
 
