@@ -13,9 +13,6 @@ branches:
 # application 복호화하여 사용할 수있도록 하기
 # gradlew의 권한을 추가한다.
 before_install:
-- openssl aes-256-cbc -K $encrypted_f27943cb6563_key -iv $encrypted_f27943cb6563_iv
-  -in application.tar.enc -out ./src/main/resources/application.tar -d
-- tar xvf ./src/main/resources/application.tar
 - chmod +x gradlew
 
 # Travis CI 서버의 Home
