@@ -50,34 +50,28 @@ Instagram의 몇몇 기능들을 클론 코딩하여 API 서버를 만들었습�
   - 게시글 좋아요 가능
 
 ## 🧾 API
+
 API 설계 : https://www.notion.so/f61f2cf64ae24200aa4e2009ccf3353b?v=155e797dcf3e4abc9312834bb0dfb02d
+
+[스웨거 API 명세서 보러가기](http://52.78.235.109/swagger-ui.html)
 
 ## 🎬 배포
   
+  front client
+  [back API Server](http://52.78.235.109/)
 
 ## 📽 시연 영상
   
 
 ## 📋 서비스 아키텍쳐
 
-## 🛠 기술적 의사결정
+![image](https://user-images.githubusercontent.com/84966961/186577087-26e82fe6-f031-4928-9e17-084d8926c92e.png)
+
+### 자동 배포 아키텍처 구성 (실패)
+
+![image](https://user-images.githubusercontent.com/84966961/186577143-3c8c29be-ea58-4cbd-bbc7-4953ec77f880.png)
 
 ## ⚡트러블 슈팅
 
-- **[BackEnd] **
-
-`문제 상황`
-
-`문제 원인`
-
-`해결 방안`
-
-
-- **[BackEnd] **
-
-`문제 상황`
-
-`문제 원인`
-
-`해결 방안`
+[wiki - 트러블 슈팅 모음집](https://github.com/Inssagram-CloneCode/backend_server/wiki/%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85-%EB%AA%A8%EC%9D%8C%EC%A7%91)
 
