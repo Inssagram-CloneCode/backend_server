@@ -68,7 +68,7 @@ API 설계 : https://www.notion.so/f61f2cf64ae24200aa4e2009ccf3353b?v=155e797dcf
 
 ![image](https://user-images.githubusercontent.com/84966961/186577087-26e82fe6-f031-4928-9e17-084d8926c92e.png)
 
-### 자동 배포 아키텍처 구성 (실패)
+### 자동 배포 아키텍처 구성
 
 ![image](https://user-images.githubusercontent.com/84966961/186577143-3c8c29be-ea58-4cbd-bbc7-4953ec77f880.png)
 
