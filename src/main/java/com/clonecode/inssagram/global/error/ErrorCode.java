@@ -22,6 +22,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "해당 유저가 존재하지 않습니다."),
     PASSWORD_NOT_MATCHED(400, "PASSWORDS_NOT_MATCHED", "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
     LOGIN_REQUIRED(400, "LOGIN_REQUIRED", "로그인이 필요합니다."),
+    USER_UNAUTHORIZED(401, "USER_UNAUTHORIZED", "유저 정보는 본인만 수정 가능합니다."),
 
     //Post
     POST_NOT_FOUND(400, "POST_NOT_FOUND", "존재하지 않는 게시글입니다."),

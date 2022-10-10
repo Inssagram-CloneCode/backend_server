@@ -1,8 +1,23 @@
 spring:
+  #  h2:
+  #    console:
+  #      enabled: true
+
+  #  datasource:
+  #    url: jdbc:h2:mem:inssagram
+  #    driver-class-name: org.h2.Driver
+  #    username: sa
+  #    password:
+
+  datasource:
+    url: jdbc:mysql://ldudb.cs3wzmj0phr7.ap-northeast-2.rds.amazonaws.com:3306/inssagram
+    username: ${MYSQLID}
+    password: ${MYSQLPWD}
+
   jpa:
     show_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -21,3 +36,15 @@ server:
 # echo 'spring-boot-security-jwt-hanghae-assignment-spring-boot-security-jwt-secret-key' | base64
 jwt:
   secret: 4oCYc3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWhhbmdoYWUtYXNzaWdubWVudC1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3Qtc2VjcmV0LWtleeKAmQo=
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${ACCESSKEY}
+      secret-key: ${SECRETKEY}
+    s3:
+      bucket: inssagram
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

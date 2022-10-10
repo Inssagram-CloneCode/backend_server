@@ -1,17 +1,15 @@
 package com.clonecode.inssagram.service;
 
-import com.clonecode.inssagram.domain.*;
-import com.clonecode.inssagram.dto.request.HeartRequestDto;
+import com.clonecode.inssagram.domain.Image;
+import com.clonecode.inssagram.domain.Post;
+import com.clonecode.inssagram.domain.User;
 import com.clonecode.inssagram.dto.request.PostRequestDto;
 import com.clonecode.inssagram.dto.response.*;
 import com.clonecode.inssagram.exception.EntityNotFoundException;
 import com.clonecode.inssagram.exception.InvalidValueException;
 import com.clonecode.inssagram.global.error.ErrorCode;
 import com.clonecode.inssagram.jwt.TokenProvider;
-import com.clonecode.inssagram.repository.CommentRepository;
-import com.clonecode.inssagram.repository.HeartRepository;
-import com.clonecode.inssagram.repository.ImageRepository;
-import com.clonecode.inssagram.repository.PostRepository;
+import com.clonecode.inssagram.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,14 +28,15 @@ public class PostService {
     private final StorageService storageService;
     private final HeartService heartService;
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
     private final HeartRepository heartRepository;
 
     @Transactional
     public ResponseDto<?> writePost(User user, PostRequestDto requestDto, List<MultipartFile> imageFileList) {
         List<String> imageUrlList = storageService.uploadFile(imageFileList, "posts/");      //이미지 S3에 업로드
-        Post post = new Post(user, requestDto);
+        Post post = new Post(user, requestDto, 0L);
         postRepository.save(post);      //게시물 db에 저장
-        List<Image> collect = imageUrlList.stream().map(image->new Image(image,post)).collect(Collectors.toList());   //String List를 Image List로 변환
+        List<Image> collect = imageUrlList.stream().map(image -> new Image(image, post)).collect(Collectors.toList());   //String List를 Image List로 변환
         imageRepository.saveAll(collect);
         Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기 - 게시물을 저장 먼저 해야 id가 생겨서 count 가능
         return ResponseDto.success(PostCreateResponseDto.builder()      //responseDto 돌려주기
@@ -57,7 +56,7 @@ public class PostService {
         for (Post post : posts) {       //각 포스트마다 돌면서
             Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
             postAllResponseDtoList.add(PostAllResponseDto.builder()//빈 array에 responseDto 만들어서 넣어주기
-                    .isHeart(heartService.isHeart(post.getId(),user))
+                    .isHeart(heartService.isHeart(post.getId(), user))
                     .post(post)
                     .heartNum(post.getHeartNum())
                     .commentNum(commentNum)
@@ -73,11 +72,11 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));      //없을 시 찾을 수 없음
         User user = tokenProvider.getUserFromAuthentication();
         Long commentNum = commentRepository.countByPost(post);       //댓글 수 게시물id로 세서 찾기
-         return ResponseDto.success(PostDetailResponseDto.builder()      //responseDto 돌려주기
+        return ResponseDto.success(PostDetailResponseDto.builder()      //responseDto 돌려주기
                 .post(post)
                 .heartNum(post.getHeartNum())
                 .commentNum(commentNum)
-                .isHeart(heartService.isHeart(post.getId(),user))
+                .isHeart(heartService.isHeart(post.getId(), user))
                 .build());
     }
 
@@ -85,8 +84,8 @@ public class PostService {
     @Transactional
     public ResponseDto<?> updateOnePost(Long postId, User user, PostRequestDto requestDto) {
         Post post = postRepository.findById(postId)      //게시물 찾기
-                .orElseThrow(() ->new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));       //없을 시 찾을 수 없음
-        if(!user.getId().equals(post.getUser().getId())){        //로그인한 사용자=게시물 작성자인지 확인
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));       //없을 시 찾을 수 없음
+        if (!user.getId().equals(post.getUser().getId())) {        //로그인한 사용자=게시물 작성자인지 확인
             throw new InvalidValueException(ErrorCode.POST_UNAUTHORIZED);    //아닐 시 권한 없음
         }
         post.update(requestDto);      //맞을 시 업데이트
@@ -97,9 +96,44 @@ public class PostService {
     public void deleteOnePost(Long postId, User user) {
         Post post = postRepository.findById(postId)     //게시물 찾기
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND));      //없을 시 찾을 수 없음
-        if(!user.getId().equals(post.getUser().getId())){        //로그인한 사용자=게시물 작성자인지 확인
+        if (!user.getId().equals(post.getUser().getId())) {        //로그인한 사용자=게시물 작성자인지 확인
             throw new InvalidValueException(ErrorCode.POST_UNAUTHORIZED);   //아닐 시 권한 없음
         }
         postRepository.deleteById(postId);      //맞을 시 삭제
     }
+
+    // 유저가 쓴 글 조회
+    @Transactional
+    public ResponseDto<?> getMyPage(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+        MyPageResponseDto myPageResponseDto = MyPageResponseDto.builder()
+                .user(user)
+                .postTotalNum(postRepository.countByUserId(userId))
+                .heartTotalNum(heartService.totalHeartsByUser(userId))
+                .contentList(getMyPostList(user))
+                .build();
+        return ResponseDto.success(myPageResponseDto);
+    }
+
+    public List<PostCreateResponseDto> getMyPostList(User user) {
+        List<Post> posts = postRepository.findAllByUserOrderByCreatedAtDesc(user);
+        if (!(posts == null)) {
+            List<PostCreateResponseDto> contentsList = new ArrayList<>();
+            for (Post post : posts) {
+                Long commentNum = commentRepository.countByPost(post);
+                PostCreateResponseDto mypostResponseDto = PostCreateResponseDto.builder()
+                        .post(post)
+                        .imageUrl(post.getImageList().get(0).getImageUrl())
+                        .heartNum(post.getHeartNum())
+                        .commentNum(commentNum)
+                        .build();
+                contentsList.add(mypostResponseDto);
+            }
+            return contentsList;
+        } else {
+            return null;
+        }
+    }
+
 }
